@@ -1,13 +1,15 @@
 <?php
-  error_reporting(E_ALL);
   ini_set('display_errors', '1');
-  ini_set("error_log",dirname(__FILE__).'/errorlog.txt');
+  ini_set('display_startup_errors', 1);
+  error_reporting(E_ALL);
   session_start();
 
   if(isset($_POST['submit'])){
     $conn = new mysqli('localhost','root','','employeeTS');
 
-    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+    if(!$conn){
+      die("Connection failed: ". mysqli_connect_error());
+    }
 
 
     $hours= $_POST['hourPHP'];
@@ -19,7 +21,7 @@
     $stmt->bind_param("idss",$hours,$rate,$date,$user);
     $stmt->execute();
 
-    echo "New record created succesfully";
+    echo "New record created succesfully.";
 
     $stmt->close();
     $conn->close();
@@ -42,7 +44,7 @@
       </ul>
     </nav>
     <div class="jumbotron justify-content-center">
-      <h1 class="text-info justify-content-center">Get Your Income (Tax Feature Coming Soon)!</h1>
+      <h1 class="text-info justify-content-center">Get Your Income</h1>
     </div>
     <div class="container">
       <div  class="row">
@@ -51,7 +53,7 @@
           <div class="card bg-light">
             <div class="card-header">Input Your Rate and Hours</div>
             <div class="card-body">
-              <form method="post" action="hourspage.php">
+              <form method="post" action="tsserver.php">
                 <div class="form-group row">
                   <label class="col-sm-4 col-form-label"for="hours">Hours</label>
                   <div class ="col-sm-5">
