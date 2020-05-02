@@ -11,8 +11,9 @@
 
     $email = $connection->real_escape_string($_POST['emailPHP']);
     $password = $connection->real_escape_string($_POST['passwordPHP']);
+    $hpass = hash('sha1',$password);
 
-    $data = $connection->query("SELECT id FROM Users WHERE email_address='$email'AND password='$password'");
+    $data = $connection->query("SELECT id FROM Users WHERE email_address='$email'AND password='$hpass'");
     if($data->num_rows > 0){
       $_SESSION['loggedIN']='1';
       $_SESSION['email']=$email;
@@ -31,7 +32,7 @@
         body {
           background: #34A3CA !important;
         }
-        
+
      </style>
   </head>
   <body>
