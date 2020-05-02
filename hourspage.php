@@ -1,33 +1,3 @@
-<?php
-  ini_set('display_errors', '1');
-  ini_set('display_startup_errors', 1);
-  error_reporting(E_ALL);
-  session_start();
-
-  if(isset($_POST['submit'])){
-    $conn = new mysqli('localhost','root','','employeeTS');
-
-    if(!$conn){
-      die("Connection failed: ". mysqli_connect_error());
-    }
-
-
-    $hours= $_POST['hourPHP'];
-    $rate= $_POST['ratePHP'];
-    $date= $_POST['datePHP'];
-    $user= $_SESSION['email'];
-    //prepared statement
-    $stmt =$conn->prepare("INSERT INTO Paysheet(`Hours`,`Rate`,`Date`,`Employee_email`) VALUES(?,?,?,?)");
-    $stmt->bind_param("idss",$hours,$rate,$date,$user);
-    $stmt->execute();
-
-    echo "New record created succesfully.";
-
-    $stmt->close();
-    $conn->close();
-  }
-?>
-
 <html>
   <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
@@ -94,60 +64,58 @@
               <p id="response"></p>
               </div>
             </div>
-
         </div>
-      <script
-      src="https://code.jquery.com/jquery-3.4.1.min.js"
-      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-      crossorigin="anonymous"></script>
-      <script type="text/javascript">
-        $(document).ready(function(){
-          //function to determine total pay-out
-          $('#submit_pay').on('click',function(){
-            var hoursf=$("#hours").val();
-            var ratef=$("#rate").val();
-            var datef=$("#date").val();
-            var statef = $('#dropdown-item').val();
-            //validation check to see if all fields have been filled
-            if(hoursf==""&&ratef==""){
-              alert("Please fill out all fields");
-            }else{
-            if(hoursf==""||ratef==""){
-                alert("Please fill out required field");
-              }}
+        <script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+        <script type="text/javascript">
+          $(document).ready(function(){
+            //function to determine total pay-out
+            $('#submit').on('click',function(e){
+              //stop page refresh
+              e.preventDefault();
+
+              var hoursf=$("#hours").val();
+              var ratef=$("#rate").val();
+              var datef=$("#date").val();
+              var statef = $('#dropdown-item').val();
+              //validation check to see if all fields have been filled
+              if(hoursf==""&&ratef==""){
+                alert("Please fill out all fields");
+              }else{
+              if(hoursf==""||ratef==""){
+                  alert("Please fill out required field");
+                }}
 
 
 
 
-            //send data off to server
-            $.ajax(
-              {
-                url:"hourspage.php",
-                type:"POST",
-                data:{
-                  submit:1,
-                  hourPHP:hoursf,
-                  ratePHP:ratef,
-                  datePHP:datef
-                },
-                success: function(response){
+              //send data off to server
+              $.ajax(
+                {
+                  url:"tsserver.php",
+                  type:"POST",
+                  data:{
+                    hourPHP:hoursf,
+                    ratePHP:ratef,
+                    datePHP:datef
+                  },
+                  success: function(response){
 
-                  $('#response').html(response);
-                  console.log(data);
+                    $('#response').html(response);
+                      },
+                  datatype:"text"
+                }
+              );
+              //calc income so user knows how much they are getting
+              var incomef = hoursf*ratef;
+              $('span#incomef').text(incomef);
+              $('p#income_field').show();
 
-                    },
-                datatype:"text"
-              }
-            );
-            //calc income so user knows how much they are getting
-            var incomef = hoursf*ratef;
-            $('span#incomef').text(incomef);
-            $('p#income_field').show();
-
-
-          })
-        });
-      </script>
+            })
+          });
+        </script>
     <div class="col"></div>
     </div>
   </div>
