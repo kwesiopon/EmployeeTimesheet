@@ -88,9 +88,6 @@
                   alert("Please fill out required field");
                 }}
 
-
-
-
               //send data off to server
               $.ajax(
                 {
@@ -102,7 +99,6 @@
                     datePHP:datef
                   },
                   success: function(response){
-
                     $('#response').html(response);
                       },
                   datatype:"text"
